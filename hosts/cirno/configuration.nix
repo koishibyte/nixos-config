@@ -28,7 +28,11 @@
   };
  
   #VR gaming 
-  services.wivrn.enable = true;
+  services.wivrn = {
+  enable = true;
+  openFirewall = true;
+  };
+
 
   chimera.cooling.OpenLinkHub = {
     enable = true;
