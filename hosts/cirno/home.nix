@@ -24,6 +24,7 @@
     filezilla
     qbittorrent
     vlc
+    peazip
     
  
     # games 
@@ -31,6 +32,7 @@
     prismlauncher
     oversteer
     slimevr
+    wayvr
 
     # terminal
     fastfetch
