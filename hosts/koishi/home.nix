@@ -48,6 +48,15 @@
     putty
     nodejs_26
     unzip
+
+    #neovim packages
+    stylua
+    shfmt
+    gofumpt
+    yamlfmt
+    rustfmt
+    nixfmt
+    clang-tools
     
 
     #ricing
