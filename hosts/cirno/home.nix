@@ -25,6 +25,7 @@
     qbittorrent
     vlc
     peazip
+    orca-slicer
     
  
     # games 
