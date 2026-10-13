@@ -35,6 +35,16 @@
     slimevr
     wayvr
 
+
+    #neovim packages
+    stylua
+    shfmt
+    gofumpt
+    yamlfmt
+    rustfmt
+    nixfmt
+    clang-tools
+
     # terminal
     fastfetch
     ghostty
