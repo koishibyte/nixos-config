@@ -1,4 +1,4 @@
-#sha256-CfukzyKKDfC5EDx7NAqUr7feDbi2XMtIBGRvqKgUtlw= Module is from: https://github.com/chomes/nix_modules I only edited line 31 and line 38 to be updated to 5.4.1
+#Module is from: https://github.com/chomes/nix_modules I only edited line 31 and line 38 to be updated to 5.4.1
 
 
 {
