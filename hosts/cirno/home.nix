@@ -1,12 +1,12 @@
 { config, pkgs, ... }:
 
 {
-  
+
   home.username = "cirno";
   home.homeDirectory = "/home/cirno";
   home.stateVersion = "26.05";
 
-  services.arrpc = {  
+  services.arrpc = {
     enable = true;
     package = pkgs.arrpc;
     systemdTarget = "graphical-session.target";
@@ -26,15 +26,14 @@
     vlc
     peazip
     orca-slicer
-    
- 
-    # games 
+    obs-studio
+
+    # games
     osu-lazer-bin
     prismlauncher
     oversteer
     slimevr
     wayvr
-
 
     #neovim packages
     stylua
@@ -50,8 +49,8 @@
     ghostty
     neovim
     git
-    putty	
+    putty
     pywal16
     pywalfox-native
   ];
-}  
+}
