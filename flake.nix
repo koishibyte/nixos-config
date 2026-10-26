@@ -23,41 +23,53 @@
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, home-manager, agenix, nixpkgs-xr, ... }: {
-    nixosConfigurations.nixstrogen = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = { inherit inputs; };
-      modules = [
-        ./hosts/koishi/configuration.nix
-        home-manager.nixosModules.home-manager
-        agenix.nixosModules.default
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.extraSpecialArgs = { inherit inputs; };
-          home-manager.users.koishi = import ./hosts/koishi/home.nix;
-        }
-      ];
-    };
+  outputs =
+    inputs@{
+      self,
+      nixpkgs,
+      home-manager,
+      agenix,
+      nixpkgs-xr,
+      ...
+    }:
+    {
+      nixosConfigurations.nixstrogen = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./hosts/koishi/configuration.nix
+          home-manager.nixosModules.home-manager
+          agenix.nixosModules.default
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "backup";
+            home-manager.extraSpecialArgs = { inherit inputs; };
+            home-manager.users.koishi = import ./hosts/koishi/home.nix;
+          }
+        ];
+      };
 
-    nixosConfigurations.blahaj = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = { inherit inputs; };
-      modules = [
-        ./hosts/cirno/configuration.nix
-	home-manager.nixosModules.home-manager
-	agenix.nixosModules.default
-	nixpkgs-xr.nixosModules.nixpkgs-xr
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.extraSpecialArgs = { inherit inputs; };
-          home-manager.users.cirno = import ./hosts/cirno/home.nix; 
-        }
-        {
-          nixpkgs.overlays = [ inputs.nix-cachyos-kernel.overlays.pinned ];
-        }
-      ];
+      nixosConfigurations.blahaj = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./hosts/cirno/configuration.nix
+          home-manager.nixosModules.home-manager
+          agenix.nixosModules.default
+          nixpkgs-xr.nixosModules.nixpkgs-xr
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "backup";
+
+            home-manager.extraSpecialArgs = { inherit inputs; };
+            home-manager.users.cirno = import ./hosts/cirno/home.nix;
+          }
+          {
+            nixpkgs.overlays = [ inputs.nix-cachyos-kernel.overlays.pinned ];
+          }
+        ];
+      };
     };
-  };
 }
