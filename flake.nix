@@ -21,6 +21,9 @@
     nixpkgs-xr = {
       url = "github:nix-community/nixpkgs-xr";
     };
+    nswitch-rcm-nix = {
+      url = "github:Swarsel/nswitch-rcm-nix";
+    };
   };
 
   outputs =
@@ -30,6 +33,7 @@
       home-manager,
       agenix,
       nixpkgs-xr,
+      nswitch-rcm-nix,
       ...
     }:
     {
@@ -58,6 +62,7 @@
           home-manager.nixosModules.home-manager
           agenix.nixosModules.default
           nixpkgs-xr.nixosModules.nixpkgs-xr
+          nswitch-rcm-nix.nixosModules.nswitch-rcm
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
