@@ -6,12 +6,6 @@
   home.homeDirectory = "/home/cirno";
   home.stateVersion = "26.05";
 
-  services.arrpc = {
-    enable = true;
-    package = pkgs.arrpc;
-    systemdTarget = "graphical-session.target";
-  };
-
   home.packages = with pkgs; [
     # misc
     vesktop
