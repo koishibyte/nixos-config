@@ -1,14 +1,17 @@
-{ config, pkgs, agenix, ... }:
+{
+  config,
+  pkgs,
+  agenix,
+  ...
+}:
 
 {
-  imports =
-    [
-      ../../modules/hardware/openlinkhub.nix
-      ../../modules/gaming
-      ../../modules/default.nix
-      ./hardware-configuration.nix
-    ];
-
+  imports = [
+    ../../modules/hardware/openlinkhub.nix
+    ../../modules/gaming
+    ../../modules/default.nix
+    ./hardware-configuration.nix
+  ];
 
   # Nvidia and openrgb
   hardware.nvidia.enable = true;
@@ -16,7 +19,7 @@
 
   # NordVPN configuration
   custom.services.nordvpn.enable = true;
-  users.groups.nordvpn.members = ["cirno"];
+  users.groups.nordvpn.members = [ "cirno" ];
 
   cirno.gaming = {
     enable = true;
@@ -26,13 +29,12 @@
     slippi.enable = true;
     dolphinemu.enable = true;
   };
- 
-  #VR gaming 
-  services.wivrn = {
-  enable = true;
-  openFirewall = true;
-  };
 
+  #VR gaming
+  services.wivrn = {
+    enable = true;
+    openFirewall = true;
+  };
 
   chimera.cooling.OpenLinkHub = {
     enable = true;
@@ -41,15 +43,36 @@
   };
 
   #udev rules for oversteer and slimevr
-  services.udev.packages = with pkgs; [ oversteer slimevr ];
+  services.udev.packages = with pkgs; [
+    oversteer
+    slimevr
+  ];
 
   #pnpm package for slimevr
-  nixpkgs.config.permittedInsecurePackages = ["pnpm-9.15.9" ];  
+  nixpkgs.config.permittedInsecurePackages = [ "pnpm-9.15.9" ];
 
+  #rcm stuff for nintendo switch
+  services.nswitch-rcm = {
+    enable = true;
+    package = (
+      pkgs.fetchurl {
+        url = "https://github.com/CTCaer/hekate/releases/download/v6.5.4/hekate_ctcaer_6.5.4.bin";
+        hash = "sha256-lfbpM+MuAo866Q8LCFf/R4AOg0vazjigqwGdjtNajCQ=";
 
-  networking.hostName = "blahaj"; 
+      }
+    );
+  };
 
-  
+  #swap file
+  swapDevices = [
+    {
+      device = "/var/lib/swapfile";
+      size = 16 * 1024; # 16 GiB
+    }
+  ];
+
+  networking.hostName = "blahaj";
+
   # Set your time zone.
   time.timeZone = "America/New_York";
 
@@ -68,20 +91,18 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-
   #Plasma 6
   services.desktopManager.plasma6.enable = true;
 
   # SDDM (wayland)
   services.displayManager.sddm = {
-	enable = true;
+    enable = true;
 
-	wayland = {
-	enable = true;
-	};
+    wayland = {
+      enable = true;
+    };
   };
-  
-  
+
   #For gtk
   programs.dconf.enable = true;
 
@@ -89,7 +110,10 @@
   users.users."cirno" = {
     isNormalUser = true;
     description = "";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
     packages = with pkgs; [
       kdePackages.kate
       openrgb-with-all-plugins
@@ -97,27 +121,28 @@
     ];
   };
 
-   services.blueman.enable = true;
+  services.blueman.enable = true;
 
- boot.loader.systemd-boot.enable = true;  
- boot.loader.efi.canTouchEfiVariables = true;
- boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-bore-lto;
-  
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+  boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-bore-lto;
 
- 
   fonts.packages = with pkgs; [
-  nerd-fonts.fira-code
-  nerd-fonts.droid-sans-mono
-  nerd-fonts.jetbrains-mono
-  font-awesome
-  jetbrains-mono
-];
+    nerd-fonts.fira-code
+    nerd-fonts.droid-sans-mono
+    nerd-fonts.jetbrains-mono
+    font-awesome
+    jetbrains-mono
+  ];
 
   age.identityPaths = [ "/home/cirno/.ssh/id_ed25519" ];
 
   system.stateVersion = "26.05"; # Did you read the comment?
 
   nixpkgs.config.allowUnfree = true;
-  nix.settings.experimental-features = [ "nix-command" "flakes"];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
 }
