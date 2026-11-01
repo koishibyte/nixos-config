@@ -19,13 +19,6 @@ let
 
 in
 {
-  # X11 and KDE Plasma configuration
-  services.xserver.enable = true;
-  services.displayManager.sddm = {
-    enable = lib.mkDefault true;
-    theme = "breeze";
-    wayland.enable = true;
-  };
   environment.systemPackages = with pkgs; [
     (pkgs.writeTextDir "share/sddm/themes/breeze/theme.conf.user" ''
       [General]
