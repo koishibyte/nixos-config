@@ -59,6 +59,23 @@
     withUWSM = true;
   };
 
+  services.tailscale = {
+    enable = true;
+    # authKeyFile = "/run/secrets/tailscale_key";
+  };
+
+  #rcm stuff for nintendo switch
+  services.nswitch-rcm = {
+    enable = true;
+    package = (
+      pkgs.fetchurl {
+        url = "https://github.com/CTCaer/hekate/releases/download/v6.5.4/hekate_ctcaer_6.5.4.bin";
+        hash = "sha256-lfbpM+MuAo866Q8LCFf/R4AOg0vazjigqwGdjtNajCQ=";
+
+      }
+    );
+  };
+
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_latest;

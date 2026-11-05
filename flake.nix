@@ -44,6 +44,7 @@
           ./hosts/koishi/configuration.nix
           home-manager.nixosModules.home-manager
           agenix.nixosModules.default
+          nswitch-rcm-nix.nixosModules.nswitch-rcm
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
