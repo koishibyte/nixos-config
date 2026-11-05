@@ -1,10 +1,16 @@
 { config, pkgs, ... }:
 
 {
-  
+
+  imports = [
+    ../../home-manager/koishi/bash.nix
+    ../../home-manager/koishi/mako.nix
+  ];
+
   home.username = "koishi";
   home.homeDirectory = "/home/koishi";
   home.stateVersion = "26.05";
+
   # Packages that should be installed to the user profile.
   home.packages = with pkgs; [
     #misc
@@ -15,19 +21,17 @@
     pipewire
     p7zip
     thunar
-    grim
-    slurp
     wl-clipboard
     libnotify
-    dunst
-    brightnessctl  
+    mako
+    brightnessctl
     proton-vpn
     blueman
     ollama
     virt-manager
     filezilla
-  
-    osu-lazer
+    satty
+    grim
 
     #terminal
     yazi
@@ -35,7 +39,6 @@
     fastfetch
     alacritty
     ghostty
-
 
     #dev
     neovim
@@ -57,7 +60,7 @@
     rustfmt
     nixfmt
     clang-tools
-    
+    deno
 
     #ricing
     waybar
@@ -66,11 +69,11 @@
     hyprpaper
     pywal16
     pywalfox-native
-    hyprlock	
+    hyprlock
 
   ];
 
-   # This value determines the home Manager release that your
+  # This value determines the home Manager release that your
   # configuration is compatible with. This helps avoid breakage
   # when a new home Manager release introduces backwards
   # incompatible changes.
