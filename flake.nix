@@ -24,6 +24,11 @@
     nswitch-rcm-nix = {
       url = "github:Swarsel/nswitch-rcm-nix";
     };
+    plasma-manager = {
+      url = "github:nix-community/plasma-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
   };
 
   outputs =
@@ -34,6 +39,7 @@
       agenix,
       nixpkgs-xr,
       nswitch-rcm-nix,
+      plasma-manager,
       ...
     }:
     {
@@ -48,6 +54,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            home-manager.sharedModules = [ plasma-manager.homeModules.plasma-manager ];
             home-manager.backupFileExtension = "backup";
             home-manager.extraSpecialArgs = { inherit inputs; };
             home-manager.users.koishi = import ./hosts/koishi/home.nix;
@@ -68,7 +75,7 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.backupFileExtension = "backup";
-
+            home-manager.sharedModules = [ inputs.plasma-manager.homeModules.plasma-manager ];
             home-manager.extraSpecialArgs = { inherit inputs; };
             home-manager.users.cirno = import ./hosts/cirno/home.nix;
           }
