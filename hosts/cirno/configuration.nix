@@ -10,6 +10,7 @@
     ../../modules/hardware/openlinkhub.nix
     ../../modules/gaming
     ../../modules/default.nix
+    ../../home-manager/cirno/sddm-theme.nix
     ./hardware-configuration.nix
   ];
 
