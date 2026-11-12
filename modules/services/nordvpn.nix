@@ -1,87 +1,99 @@
 #Module is from: https://github.com/chomes/nix_modules I only edited line 31 and line 38 to be updated to 5.4.1
 
-
 {
   config,
   lib,
   pkgs,
   ...
-}: let
-  nordVpnPkg = pkgs.callPackage ({
-    autoPatchelfHook,
-    buildFHSEnvChroot,
-    dpkg,
-    fetchurl,
-    lib,
-    stdenv,
-    sysctl,
-    iptables,
-    iproute2,
-    procps,
-    cacert,
-    sqlite,
-    libnl,
-    libcap_ng,
-    libxml2,
-    libidn2,
-    zlib,
-    wireguard-tools,
-  }: let
-    pname = "nordvpn";
-    version = "5.4.1";
+}:
+let
+  nordVpnPkg = pkgs.callPackage (
+    {
+      autoPatchelfHook,
+      buildFHSEnv, # chroot from the original module is outdated for nix-unstable
+      dpkg,
+      fetchurl,
+      lib,
+      stdenv,
+      sysctl,
+      iptables,
+      iproute2,
+      procps,
+      cacert,
+      sqlite,
+      libnl,
+      libcap_ng,
+      libxml2,
+      libidn2,
+      zlib,
+      wireguard-tools,
+    }:
+    let
+      pname = "nordvpn";
+      version = "6.0.2";
 
-    nordVPNBase = stdenv.mkDerivation {
-      inherit pname version;
+      nordVPNBase = stdenv.mkDerivation {
+        inherit pname version;
 
-      src = fetchurl {
-        url = "https://repo.nordvpn.com/deb/nordvpn/debian/pool/main/n/nordvpn/nordvpn_${version}_amd64.deb";
-        hash = "sha256-CfukzyKKDfC5EDx7NAqUr7feDbi2XMtIBGRvqKgUtlw=";	
+        src = fetchurl {
+          url = "https://repo.nordvpn.com/deb/nordvpn/debian/pool/main/n/nordvpn/nordvpn_${version}_amd64.deb";
+          hash = "sha256-gd95B8qM1U4O0ItSId1r4rwqrJxHMAYlv5SUqN6pQ+E=";
+        };
+
+        buildInputs = [
+          libxml2
+          libidn2
+          libnl
+          libcap_ng
+          sqlite
+        ];
+        nativeBuildInputs = [
+          dpkg
+          autoPatchelfHook
+          stdenv.cc.cc.lib
+        ];
+
+        dontConfigure = true;
+        dontBuild = true;
+
+        unpackPhase = ''
+          runHook preUnpack
+          dpkg --extract $src .
+          runHook postUnpack
+        '';
+
+        installPhase = ''
+          runHook preInstall
+          mkdir -p $out
+          mv usr/* $out/
+          mv var/ $out/
+          mv etc/ $out/
+          runHook postInstall
+        '';
       };
 
-      buildInputs = [libxml2 libidn2 libnl libcap_ng sqlite];
-      nativeBuildInputs = [dpkg autoPatchelfHook stdenv.cc.cc.lib];
+      nordVPNfhs = buildFHSEnv {
+        name = "nordvpnd";
+        runScript = "nordvpnd";
 
-      dontConfigure = true;
-      dontBuild = true;
-
-      unpackPhase = ''
-        runHook preUnpack
-        dpkg --extract $src .
-        runHook postUnpack
-      '';
-
-      installPhase = ''
-        runHook preInstall
-        mkdir -p $out
-        mv usr/* $out/
-        mv var/ $out/
-        mv etc/ $out/
-        runHook postInstall
-      '';
-    };
-
-    nordVPNfhs = buildFHSEnvChroot {
-      name = "nordvpnd";
-      runScript = "nordvpnd";
-
-      # hardcoded path to /sbin/ip
-      targetPkgs = pkgs: [
-        sqlite
-        nordVPNBase
-        sysctl
-        iptables
-        iproute2
-        procps
-        cacert
-        libxml2
-        libnl
-        libcap_ng
-        libidn2
-        zlib
-        wireguard-tools
-      ];
-    };
-  in
+        # hardcoded path to /sbin/ip
+        targetPkgs = pkgs: [
+          sqlite
+          nordVPNBase
+          sysctl
+          iptables
+          iproute2
+          procps
+          cacert
+          libxml2
+          libnl
+          libcap_ng
+          libidn2
+          zlib
+          wireguard-tools
+        ];
+      };
+    in
     stdenv.mkDerivation {
       inherit pname version;
 
@@ -103,52 +115,54 @@
         description = "CLI client for NordVPN";
         homepage = "https://www.nordvpn.com";
         license = licenses.unfreeRedistributable;
-        maintainers = with maintainers; [dr460nf1r3];
-        platforms = ["x86_64-linux"];
+        maintainers = with maintainers; [ dr460nf1r3 ];
+        platforms = [ "x86_64-linux" ];
       };
-    }) {};
+    }
+  ) { };
 in
-  with lib; {
-    options.custom.services.nordvpn.enable = mkOption {
-      type = types.bool;
-      default = false;
-      description = ''
-        Whether to enable the NordVPN daemon. Note that you'll have to set
-        `networking.firewall.checkReversePath = false;`, add UDP 1194
-        and TCP 443 to the list of allowed ports in the firewall and add your
-        user to the "nordvpn" group (`users.users.<username>.extraGroups`).
-      '';
-    };
+with lib;
+{
+  options.custom.services.nordvpn.enable = mkOption {
+    type = types.bool;
+    default = false;
+    description = ''
+      Whether to enable the NordVPN daemon. Note that you'll have to set
+      `networking.firewall.checkReversePath = false;`, add UDP 1194
+      and TCP 443 to the list of allowed ports in the firewall and add your
+      user to the "nordvpn" group (`users.users.<username>.extraGroups`).
+    '';
+  };
 
-    config = mkIf config.custom.services.nordvpn.enable {
-      networking.firewall.checkReversePath = false;
+  config = mkIf config.custom.services.nordvpn.enable {
+    networking.firewall.checkReversePath = false;
 
-      environment.systemPackages = [nordVpnPkg];
+    environment.systemPackages = [ nordVpnPkg ];
 
-      users.groups.nordvpn = {};
-      systemd = {
-        services.nordvpn = {
-          description = "NordVPN daemon.";
-          serviceConfig = {
-            ExecStart = "${nordVpnPkg}/bin/nordvpnd";
-            ExecStartPre = pkgs.writeShellScript "nordvpn-start" ''
-              mkdir -m 700 -p /var/lib/nordvpn;
-              if [ -z "$(ls -A /var/lib/nordvpn)" ]; then
-                cp -r ${nordVpnPkg}/var/lib/nordvpn/* /var/lib/nordvpn;
-              fi
-            '';
-            NonBlocking = true;
-            KillMode = "process";
-            Restart = "on-failure";
-            RestartSec = 5;
-            RuntimeDirectory = "nordvpn";
-            RuntimeDirectoryMode = "0750";
-            Group = "nordvpn";
-          };
-          wantedBy = ["multi-user.target"];
-          after = ["network-online.target"];
-          wants = ["network-online.target"];
+    users.groups.nordvpn = { };
+    systemd = {
+      services.nordvpn = {
+        description = "NordVPN daemon.";
+        serviceConfig = {
+          ExecStart = "${nordVpnPkg}/bin/nordvpnd";
+          ExecStartPre = pkgs.writeShellScript "nordvpn-start" ''
+            mkdir -m 700 -p /var/lib/nordvpn;
+            if [ -z "$(ls -A /var/lib/nordvpn)" ]; then
+              cp -r ${nordVpnPkg}/var/lib/nordvpn/* /var/lib/nordvpn;
+            fi
+          '';
+          NonBlocking = true;
+          KillMode = "process";
+          Restart = "on-failure";
+          RestartSec = 5;
+          RuntimeDirectory = "nordvpn";
+          RuntimeDirectoryMode = "0750";
+          Group = "nordvpn";
         };
+        wantedBy = [ "multi-user.target" ];
+        after = [ "network-online.target" ];
+        wants = [ "network-online.target" ];
       };
     };
-  }
+  };
+}
