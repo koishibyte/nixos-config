@@ -21,6 +21,7 @@
   # NordVPN configuration
   custom.services.nordvpn.enable = true;
   users.groups.nordvpn.members = [ "cirno" ];
+  services.resolved.enable = true;
 
   cirno.gaming = {
     enable = true;
@@ -57,8 +58,8 @@
     enable = true;
     package = (
       pkgs.fetchurl {
-        url = "https://github.com/CTCaer/hekate/releases/download/v6.5.4/hekate_ctcaer_6.5.4.bin";
-        hash = "sha256-lfbpM+MuAo866Q8LCFf/R4AOg0vazjigqwGdjtNajCQ=";
+        url = "https://github.com/CTCaer/hekate/releases/download/v6.5.5/hekate_ctcaer_6.5.5.bin";
+        hash = "sha256-CXUqvSB4A3CK3W4iFR6Utx/7qv92nRutdZWEt2728F4=";
 
       }
     );
