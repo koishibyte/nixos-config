@@ -24,6 +24,7 @@
     obs-studio
     alcom
     unityhub
+    discord
 
     # games
     osu-lazer-bin
